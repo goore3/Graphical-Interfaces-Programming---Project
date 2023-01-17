@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Web;
@@ -162,12 +163,6 @@ namespace Graphical_Interfaces_Programming___Project
             {
                 vel.Y *= -1; ballPos.Y = height - ballRadius;
             }
-        }
-
-        private void createRectangle(int x, int y, int width, int height)
-        {
-            Rectangle r1 = new Rectangle(x,y,width,height);
-            walls.Add(r1);
         }
 
         private void drawRectangles(Graphics g)
