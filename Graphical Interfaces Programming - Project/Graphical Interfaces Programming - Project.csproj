@@ -53,12 +53,6 @@
     <Compile Include="GolfForm.Designer.cs">
       <DependentUpon>GolfForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="OptionForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="OptionForm.Designer.cs">
-      <DependentUpon>OptionForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="GolfForm.resx">
