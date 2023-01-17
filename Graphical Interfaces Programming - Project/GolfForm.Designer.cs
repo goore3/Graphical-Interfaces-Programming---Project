@@ -37,6 +37,11 @@
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.drawingPanel = new System.Windows.Forms.Panel();
             this.animationTimer = new System.Windows.Forms.Timer(this.components);
+            this.changeLevelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.level1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.level2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.level3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainToolStrip.SuspendLayout();
             this.mainMenuStrip.SuspendLayout();
             this.SuspendLayout();
@@ -86,6 +91,9 @@
             // 
             // optionsToolStripMenuItem
             // 
+            this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.changeLevelToolStripMenuItem,
+            this.settingsToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.optionsToolStripMenuItem.Text = "Options";
@@ -109,6 +117,41 @@
             this.animationTimer.Enabled = true;
             this.animationTimer.Interval = 10;
             this.animationTimer.Tick += new System.EventHandler(this.animationTimer_Tick);
+            // 
+            // changeLevelToolStripMenuItem
+            // 
+            this.changeLevelToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.level1ToolStripMenuItem,
+            this.level2ToolStripMenuItem,
+            this.level3ToolStripMenuItem});
+            this.changeLevelToolStripMenuItem.Name = "changeLevelToolStripMenuItem";
+            this.changeLevelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.changeLevelToolStripMenuItem.Text = "Change level";
+            // 
+            // level1ToolStripMenuItem
+            // 
+            this.level1ToolStripMenuItem.Name = "level1ToolStripMenuItem";
+            this.level1ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.level1ToolStripMenuItem.Text = "Level 1";
+            this.level1ToolStripMenuItem.Click += new System.EventHandler(this.level1ToolStripMenuItem_Click);
+            // 
+            // level2ToolStripMenuItem
+            // 
+            this.level2ToolStripMenuItem.Name = "level2ToolStripMenuItem";
+            this.level2ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.level2ToolStripMenuItem.Text = "Level 2";
+            // 
+            // level3ToolStripMenuItem
+            // 
+            this.level3ToolStripMenuItem.Name = "level3ToolStripMenuItem";
+            this.level3ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.level3ToolStripMenuItem.Text = "Level 3";
+            // 
+            // settingsToolStripMenuItem
+            // 
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.settingsToolStripMenuItem.Text = "Settings";
             // 
             // GolfForm
             // 
@@ -140,6 +183,11 @@
         private System.Windows.Forms.Panel drawingPanel;
         private System.Windows.Forms.ToolStripLabel infoLabel;
         private System.Windows.Forms.Timer animationTimer;
+        private System.Windows.Forms.ToolStripMenuItem changeLevelToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem level1ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem level2ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem level3ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
     }
 }
 
