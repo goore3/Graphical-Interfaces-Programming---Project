@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Web;
 using System.Windows.Forms;
 using static System.Windows.Forms.LinkLabel;
@@ -92,29 +93,54 @@ namespace Graphical_Interfaces_Programming___Project
         {
             vel = ballPos - mousePos2;
         }
+        private bool LineIntersectsLine(Vector2 l1p1, Vector2 l1p2, Vector2 l2p1, Vector2 l2p2)
+        {
+            float q = (l1p1.Y - l2p1.Y) * (l2p2.X - l2p1.X) - (l1p1.X - l2p1.X) * (l2p2.Y - l2p1.Y);
+            float d = (l1p2.X - l1p1.X) * (l2p2.Y - l2p1.Y) - (l1p2.Y - l1p1.Y) * (l2p2.X - l2p1.X);
+
+            if (d == 0)
+            {
+                return false;
+            }
+
+            float r = q / d;
+
+            q = (l1p1.Y - l2p1.Y) * (l1p2.X - l1p1.X) - (l1p1.X - l2p1.X) * (l1p2.Y - l1p1.Y);
+            float s = q / d;
+
+            if (r < 0 || r > 1 || s < 0 || s > 1)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool LineIntersectsRectangle(Vector2 prevPoint, Vector2 newPoint, Rectangle rect)
+        {
+            Vector2 leftTop = new Vector2(rect.X, rect.Y);
+            Vector2 leftBottom = new Vector2(rect.X, rect.Bottom);
+            Vector2 rightTop = new Vector2(rect.Right, rect.Y);
+            Vector2 rightBottom = new Vector2(rect.Right, rect.Bottom);
+            bool leftLine = LineIntersectsLine(prevPoint, newPoint, leftTop, leftBottom);
+            bool rightLine = LineIntersectsLine(prevPoint, newPoint, rightTop, rightBottom);
+            bool topLine = LineIntersectsLine(prevPoint, newPoint, leftTop, rightTop);
+            bool bottomLine = LineIntersectsLine(prevPoint, newPoint, leftBottom, rightBottom);
+            bool final = leftLine || rightLine || topLine || bottomLine;
+            if (final)
+            {
+                return true;
+            } else
+            {
+                return false;
+            }
+        }
+
 
         private void intersectWalls()
         {
             foreach(Rectangle rect in walls)
             {
-                /*
-                if(ballPos.Y > rect.Bottom && ballPos.Y < rect.Top - ballRadius && ballPos.X > rect.Left + ballRadius && ballPos.X < rect.Right)
-                {
-                    vel.X *= -1; ballPos.X = rect.Left - ballRadius;
-                }
-                if (ballPos.Y > rect.Bottom && ballPos.Y < rect.Top - ballRadius && ballPos.X < rect.Right && ballPos.X > rect.Left)
-                {
-                    vel.X *= -1; ballPos.X = rect.Right + ballRadius;
-                }
-                if(ballPos.X > rect.Left + ballRadius && ballPos.X < rect.Right && ballPos.Y > rect.Top - ballRadius && ballPos.Y < rect.Bottom)
-                {
-                    vel.Y *= -1; ballPos.Y = rect.Top - ballRadius;
-                }
-                if (ballPos.X > rect.Left + ballRadius && ballPos.X < rect.Right && ballPos.Y < rect.Bottom && ballPos.Y > rect.Top)
-                {
-                    vel.Y *= -1; ballPos.Y = rect.Bottom + ballRadius;
-                }
-                */
                 if(ballPos.X >= rect.Left - ballRadius && ballPos.X <= rect.Right && ballPos.Y >= rect.Top - ballRadius && ballPos.Y <= rect.Bottom)
                 {
                     List<float> differences = new List<float>();
@@ -173,8 +199,46 @@ namespace Graphical_Interfaces_Programming___Project
 
         private void ballMove()
         {
-            ballPos += vel;
-            vel /= 1.5f;
+            var newBallPos = ballPos + vel;
+            if (!checkRectangleCollision(newBallPos, ballPos))
+            {
+                ballPos += vel;
+                vel /= 1.5f;
+            }
+        }
+
+        private bool checkRectangleCollision(Vector2 newballPos, Vector2 ballPos)
+        {
+            foreach(Rectangle rect in walls)
+            {
+                if(LineIntersectsRectangle(ballPos, newballPos, rect))
+                {
+                    intersectRectangle(rect);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void intersectRectangle(Rectangle rect)
+        {
+            List<float> differences = new List<float>();
+            differences.Add(Math.Abs(ballPos.Y - rect.Top));
+            differences.Add(Math.Abs(ballPos.Y - rect.Bottom));
+            differences.Add(Math.Abs(ballPos.X - rect.Right));
+            differences.Add(Math.Abs(ballPos.X - rect.Left));
+            int diffIndex = differences.IndexOf(differences.Min());
+            switch (diffIndex)
+            {
+                case 0:
+                    vel.Y *= -1; ballPos.Y = rect.Top - ballRadius - 1; break;
+                case 1:
+                    vel.Y *= -1; ballPos.Y = rect.Bottom + 1; break;
+                case 2:
+                    vel.X *= -1; ballPos.X = rect.Right + ballRadius + 1; break;
+                case 3:
+                    vel.X *= -1; ballPos.X = rect.Left - ballRadius - 1; break;
+            }
         }
 
         private void drawPanel_Paint(Graphics g)
@@ -182,7 +246,7 @@ namespace Graphical_Interfaces_Programming___Project
             ballMove();
             intersectBoundries();
             drawObstacles(g);
-            intersectWalls();
+            //intersectWalls();
             DrawBall(g, golfPen, golfBrush, ballPos, ballRadius);
             DrawBall(g, holePen, holeBrush, holePos, holeRadius);
             if (mouseOnScreen & mousePressed) {
@@ -289,11 +353,6 @@ namespace Graphical_Interfaces_Programming___Project
                 totalShots++;
                 mousePressed = false;
             }
-        }
-        
-        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            // TO DO: initialize Options form
         }
 
         public bool isBallInHole(Vector2 ballPos, Vector2 holePos, float ballRadius, float holeRadius)
