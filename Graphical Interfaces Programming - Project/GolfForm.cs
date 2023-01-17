@@ -8,6 +8,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using System.Windows.Forms;
 
 namespace Graphical_Interfaces_Programming___Project
@@ -15,17 +16,14 @@ namespace Graphical_Interfaces_Programming___Project
     public partial class GolfForm : Form
     {
         Pen golfPen = new Pen(Color.Black, 2);
+        Pen holePen = new Pen(Color.White, 2);
+        SolidBrush holeBrush = new SolidBrush(Color.Brown);
         SolidBrush golfBrush = new SolidBrush(Color.AntiqueWhite);
-        Boolean mousePressed;
-        Boolean mouseOnScreen;
-        Boolean moveBall;
-        //Point ballPos;
-        //Point mousePos;
-        Vector2 ballPos, vel;
-        float ballAngle;
-        float accel;
-        Vector2 mousePos2;
-        int ballRadius;
+        Boolean mousePressed, mouseOnScreen, moveBall;
+        float ballSpeed, ballAngle, accel;
+        int ballRadius, holeRadius, holeRadiusPadding, levelNumber;
+        bool isLevelEnded;
+        Vector2 ballPos, vel, holePos, mousePos2;
 
         public GolfForm()
         {
@@ -40,9 +38,16 @@ namespace Graphical_Interfaces_Programming___Project
             ballAngle = 0;
             accel = 0;
             ballRadius = 5;
+            holePos = new Point();
+            holePos.X = 40;
+            holePos.Y = 40;
+            holeRadius = 7;
+            holeRadiusPadding = 5;
             mousePressed = false;
             golfBrush = new SolidBrush(Color.White);
             golfPen = new Pen(Color.Black, 2);
+            isLevelEnded = false;
+            levelNumber = 1;
         }
 
         public static void DrawBall(Graphics g, Pen pen, Brush brush, Vector2 ballPos, float radius)
@@ -95,6 +100,7 @@ namespace Graphical_Interfaces_Programming___Project
             ballMove();
             intersectBoundries();
             DrawBall(g, golfPen, golfBrush, ballPos, ballRadius);
+            DrawBall(g, holePen, holeBrush, holePos, holeRadius);
             if (mouseOnScreen & mousePressed) {
                 g.DrawLine(golfPen, mousePos2.X,mousePos2.Y, ballPos.X, ballPos.Y);
             }
@@ -173,6 +179,7 @@ namespace Graphical_Interfaces_Programming___Project
         private void animationTimer_Tick(object sender, EventArgs e)
         {
             reDrawTotal();
+            EndgameListener();
         }
 
         private void drawingPanel_MouseLeave(object sender, EventArgs e)
@@ -188,6 +195,11 @@ namespace Graphical_Interfaces_Programming___Project
             return lineLength;
         }
 
+        private void level1ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //change level to 1
+        }
+
         private void drawingPanel_MouseUp(object sender, MouseEventArgs e)
         {
             if(mousePressed)
@@ -197,7 +209,50 @@ namespace Graphical_Interfaces_Programming___Project
                 mousePressed = false;
             }
         }
+        
+        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // initialize Options form
+        }
 
+        public bool isBallInHole(Vector2 ballPos, Vector2 holePos, float ballRadius, float holeRadius)
+        {
+            bool isXOnBall = false;
+            bool isYOnBall = false;
 
+            if (holePos.X - holeRadius - holeRadiusPadding < ballPos.X - ballRadius && holePos.X + holeRadius + holeRadiusPadding > ballPos.X + ballRadius)
+            {
+                isXOnBall = true;
+            }
+            if (holePos.Y - holeRadius - holeRadiusPadding < ballPos.Y - ballRadius && holePos.Y + holeRadius + holeRadiusPadding > ballPos.Y + ballRadius)
+            {
+                isYOnBall = true;
+            }
+            return isXOnBall && isYOnBall;
+        }
+
+        public void EndgameListener()
+        {
+            // generate You Win string OR go to next level
+
+            if (isBallInHole(ballPos, holePos, ballRadius, holeRadius))
+            {
+                // disappear ball, change hole color
+                isLevelEnded = false;
+                ballRadius = 0;
+                holeBrush = new SolidBrush(Color.NavajoWhite);
+                golfBrush = new SolidBrush(drawingPanel.BackColor);
+                golfPen = new Pen(golfBrush, 0);
+            }
+        }
+        private void fToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void restartToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            initValues();
+        }
     }
 }
