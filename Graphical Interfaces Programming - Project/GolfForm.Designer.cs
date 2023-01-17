@@ -104,7 +104,7 @@
             // animationTimer
             // 
             this.animationTimer.Enabled = true;
-            this.animationTimer.Interval = 10;
+            this.animationTimer.Interval = 45;
             this.animationTimer.Tick += new System.EventHandler(this.animationTimer_Tick);
             // 
             // GolfForm
