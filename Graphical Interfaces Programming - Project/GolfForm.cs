@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -197,7 +198,8 @@ namespace Graphical_Interfaces_Programming___Project
         {
             // generate You Win string OR go to next level
 
-            if (isBallInHole(ballPos, holePos, ballRadius, holeRadius)) {
+            if (isBallInHole(ballPos, holePos, ballRadius, holeRadius))
+            {
                 // disappear ball, change hole color
                 isLevelEnded = false;
                 ballRadius = 0;
@@ -206,7 +208,6 @@ namespace Graphical_Interfaces_Programming___Project
                 golfPen = new Pen(golfBrush, 0);
             }
         }
-
         private void fToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
