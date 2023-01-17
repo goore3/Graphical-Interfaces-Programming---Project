@@ -32,14 +32,8 @@
             this.mainToolStrip = new System.Windows.Forms.ToolStrip();
             this.infoLabel = new System.Windows.Forms.ToolStripLabel();
             this.mainMenuStrip = new System.Windows.Forms.MenuStrip();
-            this.fToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.restartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.changeLevelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.level1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.level2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.level3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.drawingPanel = new System.Windows.Forms.Panel();
             this.animationTimer = new System.Windows.Forms.Timer(this.components);
             this.mainToolStrip.SuspendLayout();
@@ -66,21 +60,13 @@
             // mainMenuStrip
             // 
             this.mainMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fToolStripMenuItem,
             this.restartToolStripMenuItem,
-            this.optionsToolStripMenuItem});
+            this.fToolStripMenuItem});
             this.mainMenuStrip.Location = new System.Drawing.Point(0, 0);
             this.mainMenuStrip.Name = "mainMenuStrip";
             this.mainMenuStrip.Size = new System.Drawing.Size(800, 24);
             this.mainMenuStrip.TabIndex = 1;
             this.mainMenuStrip.Text = "menuStrip1";
-            // 
-            // fToolStripMenuItem
-            // 
-            this.fToolStripMenuItem.Name = "fToolStripMenuItem";
-            this.fToolStripMenuItem.Size = new System.Drawing.Size(38, 20);
-            this.fToolStripMenuItem.Text = "Exit";
-            this.fToolStripMenuItem.Click += new System.EventHandler(this.fToolStripMenuItem_Click);
             // 
             // restartToolStripMenuItem
             // 
@@ -89,50 +75,12 @@
             this.restartToolStripMenuItem.Text = "Restart";
             this.restartToolStripMenuItem.Click += new System.EventHandler(this.restartToolStripMenuItem_Click);
             // 
-            // optionsToolStripMenuItem
+            // fToolStripMenuItem
             // 
-            this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.changeLevelToolStripMenuItem,
-            this.settingsToolStripMenuItem});
-            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
-            this.optionsToolStripMenuItem.Text = "Options";
-            this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
-            // 
-            // changeLevelToolStripMenuItem
-            // 
-            this.changeLevelToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.level1ToolStripMenuItem,
-            this.level2ToolStripMenuItem,
-            this.level3ToolStripMenuItem});
-            this.changeLevelToolStripMenuItem.Name = "changeLevelToolStripMenuItem";
-            this.changeLevelToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
-            this.changeLevelToolStripMenuItem.Text = "Change level";
-            // 
-            // level1ToolStripMenuItem
-            // 
-            this.level1ToolStripMenuItem.Name = "level1ToolStripMenuItem";
-            this.level1ToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
-            this.level1ToolStripMenuItem.Text = "Level 1";
-            this.level1ToolStripMenuItem.Click += new System.EventHandler(this.level1ToolStripMenuItem_Click);
-            // 
-            // level2ToolStripMenuItem
-            // 
-            this.level2ToolStripMenuItem.Name = "level2ToolStripMenuItem";
-            this.level2ToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
-            this.level2ToolStripMenuItem.Text = "Level 2";
-            // 
-            // level3ToolStripMenuItem
-            // 
-            this.level3ToolStripMenuItem.Name = "level3ToolStripMenuItem";
-            this.level3ToolStripMenuItem.Size = new System.Drawing.Size(110, 22);
-            this.level3ToolStripMenuItem.Text = "Level 3";
-            // 
-            // settingsToolStripMenuItem
-            // 
-            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
-            this.settingsToolStripMenuItem.Text = "Settings";
+            this.fToolStripMenuItem.Name = "fToolStripMenuItem";
+            this.fToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fToolStripMenuItem.Text = "Exit";
+            this.fToolStripMenuItem.Click += new System.EventHandler(this.fToolStripMenuItem_Click);
             // 
             // drawingPanel
             // 
@@ -150,7 +98,7 @@
             // animationTimer
             // 
             this.animationTimer.Enabled = true;
-            this.animationTimer.Interval = 10;
+            this.animationTimer.Interval = 45;
             this.animationTimer.Tick += new System.EventHandler(this.animationTimer_Tick);
             // 
             // GolfForm
@@ -179,15 +127,9 @@
         private System.Windows.Forms.MenuStrip mainMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem fToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem restartToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.Panel drawingPanel;
         private System.Windows.Forms.ToolStripLabel infoLabel;
         private System.Windows.Forms.Timer animationTimer;
-        private System.Windows.Forms.ToolStripMenuItem changeLevelToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem level1ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem level2ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem level3ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
     }
 }
 

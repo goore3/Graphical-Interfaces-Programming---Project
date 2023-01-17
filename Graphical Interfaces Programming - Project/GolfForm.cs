@@ -3,31 +3,24 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Reflection;
 using System.Web;
 using System.Windows.Forms;
+using static System.Windows.Forms.LinkLabel;
 
 namespace Graphical_Interfaces_Programming___Project
 {
     public partial class GolfForm : Form
     {
-        Pen golfPen = new Pen(Color.Black, 2);
-        Pen holePen = new Pen(Color.White, 2);
-        Pen wallPen = new Pen(Color.Brown, 2);
-        SolidBrush holeBrush = new SolidBrush(Color.Brown);
-        SolidBrush golfBrush = new SolidBrush(Color.AntiqueWhite);
-        SolidBrush wallBrush = new SolidBrush(Color.BurlyWood);
-        Boolean mousePressed, mouseOnScreen, moveBall;
-        float ballSpeed, ballAngle, accel;
-        int ballRadius, holeRadius, holeRadiusPadding, levelNumber;
-        bool isLevelEnded;
+        Pen golfPen, holePen, wallPen, arcPen;
+        List<Rectangle> walls, arcs;
+        SolidBrush holeBrush, golfBrush, wallBrush, arcBrush;
+        int ballRadius, holeRadius, holeRadiusPadding, sideNumber, totalShots;
+        bool isLevelEnded, mousePressed, mouseOnScreen;
         Vector2 ballPos, vel, holePos, mousePos2;
-        List<Rectangle> walls;
-
+        Random rand;
+        Vector2[] sides;
 
         public GolfForm()
         {
@@ -37,24 +30,55 @@ namespace Graphical_Interfaces_Programming___Project
 
         public void initValues()
         {
-            walls = new List<Rectangle>();
-            //ballPos = new Point(30, 30);
-            ballPos = new Vector2(30, 30);
-            holePos = new Vector2(400, 200);
-            
+            // Function called for every game reset and at start of the game
+            rand = new Random(new Random().Next());
+            drawingPanel.BackColor = Color.FromArgb(192, 255, 192);
+            totalShots = 0;
+            sides = new Vector2[2];
+
+            // Pen and Brushes initialization
+            golfPen = new Pen(Color.Black, 2);
+            holePen = new Pen(Color.White, 2);
+            wallPen = new Pen(Color.Brown, 2);
+            arcPen = new Pen(Color.Purple, 2);
+            holeBrush = new SolidBrush(Color.Brown);
+            golfBrush = new SolidBrush(Color.White);
+            wallBrush = new SolidBrush(Color.BurlyWood);
+            arcBrush = new SolidBrush(Color.MediumPurple);
+
+            // Sides initialization
+            sideNumber = rand.Next(0, 2);
+            sides[0] = new Vector2(rand.Next(10, drawingPanel.Width / 2), rand.Next(10, drawingPanel.Height));
+            sides[1] = new Vector2(rand.Next(drawingPanel.Width / 2, drawingPanel.Width - 10), rand.Next(10, drawingPanel.Height));
+            ballPos = sides[sideNumber];
+            holePos = sides[Math.Abs(sideNumber - 1)];
+
+            // Radiuses initialization
             ballRadius = 5;
             holeRadius = 7;
-            holeRadiusPadding = 5;
-
-            levelNumber = 1;
-
+            holeRadiusPadding = 4;
+            
+            // Flag used for mouse click event
             mousePressed = false;
+            
+            // Flag used for level reseting
             isLevelEnded = false;
 
-            createRectangle(50, 60, 50, 100);
-
-            golfBrush = new SolidBrush(Color.White);
-            golfPen = new Pen(Color.Black, 2);
+            // Obstacles generating
+            walls = new List<Rectangle>();
+            arcs = new List<Rectangle>();
+            for (int i = 0; i < 3; i++)
+            {
+                if (rand.Next(0, 2) == 1)
+                {
+                    createRectangle(rand.Next(drawingPanel.Width - 50), rand.Next(drawingPanel.Height - 50), 10, 100);
+                }
+                else
+                {
+                    createRectangle(rand.Next(drawingPanel.Width - 50), rand.Next(drawingPanel.Height - 50), 100, 10);
+                }
+                createArc(rand.Next(drawingPanel.Width - 50),rand.Next(drawingPanel.Height - 50), 100, 100);
+            }
         }
 
         public static void DrawBall(Graphics g, Pen pen, Brush brush, Vector2 ballPos, float radius)
@@ -65,7 +89,6 @@ namespace Graphical_Interfaces_Programming___Project
 
         private void ballKick(float ballSpeed)
         {
-            ballAngle= (float) Math.Atan2(mousePos2.Y - ballPos.Y, mousePos2.X - ballPos.X);
             vel = ballPos - mousePos2;
         }
 
@@ -163,8 +186,8 @@ namespace Graphical_Interfaces_Programming___Project
         {
             ballMove();
             intersectBoundries();
+            drawObstacles(g);
             intersectWalls();
-            drawRectangles(g);
             DrawBall(g, golfPen, golfBrush, ballPos, ballRadius);
             DrawBall(g, holePen, holeBrush, holePos, holeRadius);
             if (mouseOnScreen & mousePressed) {
@@ -172,7 +195,7 @@ namespace Graphical_Interfaces_Programming___Project
             }
         }
 
-        public bool detectBall(Vector2 ballPos, Vector2 mousePos,float ballRadius)
+        public bool detectBall(Vector2 ballPos, Vector2 mousePos, float ballRadius)
         {
             bool isXOnBall = false;
             bool isYOnBall = false;
@@ -189,7 +212,8 @@ namespace Graphical_Interfaces_Programming___Project
 
         private void drawingPanel_MouseDown(object sender, MouseEventArgs e)
         {
-            infoLabel.Text = "BallX:" + ballPos.X + " BallY:" + ballPos.Y;
+            if (!isLevelEnded)
+                infoLabel.Text = $"Ball X:{ballPos.X} Ball Y:{ballPos.Y} Total shots: {totalShots}";
             if (detectBall(ballPos, mousePos2, ballRadius))
             {
                 drawingPanel.BackColor = Color.Aquamarine;
@@ -199,8 +223,8 @@ namespace Graphical_Interfaces_Programming___Project
 
         private void drawingPanel_MouseMove(object sender, MouseEventArgs e)
         {
-            infoLabel.Text = "Ball Loc - X:" + ballPos.X + " Y:" + ballPos.Y + " | Angle:" + ballAngle + " | Acceleration:" + accel;
-            //drawLine(e.Location.X, e.Location.Y, ballX, ballY);
+            if (!isLevelEnded)
+                infoLabel.Text = $"Ball Loc - X:{ballPos.X} Y:{ballPos.Y} Total shots: {totalShots}";
             mouseOnScreen = true;
             mousePos2.X = e.Location.X;
             mousePos2.Y = e.Location.Y;
@@ -208,15 +232,15 @@ namespace Graphical_Interfaces_Programming___Project
             {
                 mousePos2.Y = drawingPanel.Height;
             }
-            if(e.Location.X > drawingPanel.Width)
+            if (e.Location.X > drawingPanel.Width)
             {
                 mousePos2.X = drawingPanel.Width;
             }
-            if(e.Location.X < 0)
+            if (e.Location.X < 0)
             {
                 mousePos2.X = 0;      
             }
-            if(e.Location.Y < 0)
+            if (e.Location.Y < 0)
             {
                 mousePos2.Y = 0;
             }
@@ -227,7 +251,7 @@ namespace Graphical_Interfaces_Programming___Project
             BufferedGraphicsContext currentContext;
             BufferedGraphics myBuffer;
             currentContext = BufferedGraphicsManager.Current;
-            myBuffer = currentContext.Allocate(this.drawingPanel.CreateGraphics(), this.drawingPanel.DisplayRectangle);
+            myBuffer = currentContext.Allocate(drawingPanel.CreateGraphics(), drawingPanel.DisplayRectangle);
             Graphics g = myBuffer.Graphics;
 
             drawAll(g);
@@ -261,24 +285,20 @@ namespace Graphical_Interfaces_Programming___Project
             return lineLength;
         }
 
-        private void level1ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //change level to 1
-        }
-
         private void drawingPanel_MouseUp(object sender, MouseEventArgs e)
         {
             if(mousePressed)
             {
                 drawingPanel.BackColor = Color.FromArgb(192, 255, 192);
                 ballKick(getLineLength(ballPos,mousePos2));
+                totalShots++;
                 mousePressed = false;
             }
         }
         
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // initialize Options form
+            // TO DO: initialize Options form
         }
 
         public bool isBallInHole(Vector2 ballPos, Vector2 holePos, float ballRadius, float holeRadius)
@@ -299,16 +319,16 @@ namespace Graphical_Interfaces_Programming___Project
 
         public void EndgameListener()
         {
-            // generate You Win string OR go to next level
-
             if (isBallInHole(ballPos, holePos, ballRadius, holeRadius))
             {
                 // disappear ball, change hole color
-                isLevelEnded = false;
+                isLevelEnded = true;
                 ballRadius = 0;
-                holeBrush = new SolidBrush(Color.NavajoWhite);
+                holeBrush = new SolidBrush(Color.Red);
+                drawingPanel.BackColor = Color.LightBlue;
                 golfBrush = new SolidBrush(drawingPanel.BackColor);
                 golfPen = new Pen(golfBrush, 0);
+                infoLabel.Text = $"You win! Total shots: {totalShots}. Reset level or exit the game.";
             }
         }
         private void fToolStripMenuItem_Click(object sender, EventArgs e)
@@ -319,6 +339,28 @@ namespace Graphical_Interfaces_Programming___Project
         private void restartToolStripMenuItem_Click(object sender, EventArgs e)
         {
             initValues();
+        }
+
+        private void drawObstacles(Graphics g)
+        {
+            g.DrawRectangles(wallPen, walls.ToArray());
+            foreach (Rectangle arc in arcs)
+            {
+
+                g.DrawArc(arcPen, arc, 0, 180);
+            }
+            g.FillRectangles(wallBrush, walls.ToArray());
+        }
+
+        private void createRectangle(int x, int y, int width, int height)
+        {
+            Rectangle r1 = new Rectangle(x, y, width, height);
+            walls.Add(r1);
+        }
+        private void createArc(int x, int y, int width, int height)
+        {
+            Rectangle a1 = new Rectangle(x, y, width, height);
+            arcs.Add(a1);
         }
     }
 }
