@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using System.Windows.Forms;
 
 namespace Graphical_Interfaces_Programming___Project
@@ -15,13 +16,10 @@ namespace Graphical_Interfaces_Programming___Project
     {
         Pen golfPen = new Pen(Color.Black, 2);
         SolidBrush golfBrush = new SolidBrush(Color.AntiqueWhite);
-        Boolean mousePressed;
-        Boolean mouseOnScreen;
-        Boolean moveBall;
+        Boolean mousePressed, mouseOnScreen, moveBall;
         float ballSpeed;
-        Point ballPos;
-        Point mousePos;
-        int ballRadius;
+        Point ballPos, mousePos, holePos;
+        int ballRadius, holeRadius;
 
         public GolfForm()
         {
@@ -35,6 +33,10 @@ namespace Graphical_Interfaces_Programming___Project
             ballPos.X = 30;
             ballPos.Y = 30;
             ballRadius = 5;
+            holePos = new Point();
+            holePos.X = 50;
+            holePos.Y = 50;
+            holeRadius = 7;
             mousePressed = false;
             golfBrush = new SolidBrush(Color.White);
             golfPen = new Pen(Color.Black, 2);
@@ -58,12 +60,13 @@ namespace Graphical_Interfaces_Programming___Project
         private void drawPanel_Paint(Graphics g)
         {
             DrawBall(g, golfPen, golfBrush, ballPos, ballRadius);
+            DrawBall(g, new Pen(Color.White, 2), new SolidBrush(Color.Brown), holePos, holeRadius);
             if (mouseOnScreen & mousePressed) {
                 g.DrawLine(golfPen, mousePos, ballPos);
             }
         }
 
-        public bool detectBall(Point ballPos, Point mousePos,float ballRadius)
+        public bool detectBall(Point ballPos, Point mousePos, float ballRadius)
         {
             bool isXOnBall = false;
             bool isYOnBall = false;
@@ -157,6 +160,21 @@ namespace Graphical_Interfaces_Programming___Project
                 ballKick(getLineLength(ballPos,mousePos));
                 mousePressed = false;
             }
+        }
+
+        private void fToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void restartToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            initValues();
+        }
+
+        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // initialize Options form
         }
     }
 }
