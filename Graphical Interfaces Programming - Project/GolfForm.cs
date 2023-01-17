@@ -47,7 +47,7 @@ namespace Graphical_Interfaces_Programming___Project
             golfPen = new Pen(Color.Black, 2);
             holePen = new Pen(Color.White, 2);
             wallPen = new Pen(Color.Brown, 2);
-            arcPen = new Pen(Color.Purple, 2);
+            arcPen = new Pen(Color.Purple, 3);
             holeBrush = new SolidBrush(Color.Brown);
             golfBrush = new SolidBrush(Color.White);
             wallBrush = new SolidBrush(Color.BurlyWood);
