@@ -15,11 +15,13 @@ namespace Graphical_Interfaces_Programming___Project
     public partial class GolfForm : Form
     {
         Pen golfPen = new Pen(Color.Black, 2);
+        Pen holePen = new Pen(Color.White, 2);
+        SolidBrush holeBrush = new SolidBrush(Color.Brown);
         SolidBrush golfBrush = new SolidBrush(Color.AntiqueWhite);
         Boolean mousePressed, mouseOnScreen, moveBall;
         float ballSpeed;
         Point ballPos, mousePos, holePos;
-        int ballRadius, holeRadius;
+        int ballRadius, holeRadius, holeRadiusPadding;
 
         public GolfForm()
         {
@@ -34,9 +36,10 @@ namespace Graphical_Interfaces_Programming___Project
             ballPos.Y = 30;
             ballRadius = 5;
             holePos = new Point();
-            holePos.X = 50;
-            holePos.Y = 50;
+            holePos.X = 40;
+            holePos.Y = 40;
             holeRadius = 7;
+            holeRadiusPadding = 5;
             mousePressed = false;
             golfBrush = new SolidBrush(Color.White);
             golfPen = new Pen(Color.Black, 2);
@@ -60,7 +63,7 @@ namespace Graphical_Interfaces_Programming___Project
         private void drawPanel_Paint(Graphics g)
         {
             DrawBall(g, golfPen, golfBrush, ballPos, ballRadius);
-            DrawBall(g, new Pen(Color.White, 2), new SolidBrush(Color.Brown), holePos, holeRadius);
+            DrawBall(g, holePen, holeBrush, holePos, holeRadius);
             if (mouseOnScreen & mousePressed) {
                 g.DrawLine(golfPen, mousePos, ballPos);
             }
@@ -139,6 +142,7 @@ namespace Graphical_Interfaces_Programming___Project
         private void animationTimer_Tick(object sender, EventArgs e)
         {
             reDrawTotal();
+            EndgameListener();
         }
 
         private void drawingPanel_MouseLeave(object sender, EventArgs e)
@@ -161,6 +165,39 @@ namespace Graphical_Interfaces_Programming___Project
                 mousePressed = false;
             }
         }
+        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // initialize Options form
+        }
+
+        public bool isBallInHole(Point ballPos, Point holePos, float ballRadius, float holeRadius)
+        {
+            bool isXOnBall = false;
+            bool isYOnBall = false;
+
+            if (holePos.X - holeRadius - holeRadiusPadding < ballPos.X - ballRadius && holePos.X + holeRadius + holeRadiusPadding > ballPos.X + ballRadius)
+            {
+                isXOnBall = true;
+            }
+            if (holePos.Y - holeRadius - holeRadiusPadding < ballPos.Y - ballRadius && holePos.Y + holeRadius + holeRadiusPadding > ballPos.Y + ballRadius)
+            {
+                isYOnBall = true;
+            }
+            return isXOnBall && isYOnBall;
+        }
+
+        public void EndgameListener()
+        {
+            // generate You Win string OR go to next level
+
+            if (isBallInHole(ballPos, holePos, ballRadius, holeRadius)) {
+                // disappear ball, change hole color
+                ballRadius = 0;
+                holeBrush = new SolidBrush(Color.NavajoWhite);
+                golfBrush = new SolidBrush(drawingPanel.BackColor);
+                golfPen = new Pen(golfBrush, 0);
+            }
+        }
 
         private void fToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -170,11 +207,6 @@ namespace Graphical_Interfaces_Programming___Project
         private void restartToolStripMenuItem_Click(object sender, EventArgs e)
         {
             initValues();
-        }
-
-        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            // initialize Options form
         }
     }
 }
