@@ -35,12 +35,8 @@ namespace Graphical_Interfaces_Programming___Project
         {
             //ballPos = new Point(30, 30);
             ballPos = new Vector2(30, 30);
-            ballAngle = 0;
-            accel = 0;
+            holePos = new Vector2(100, 100);
             ballRadius = 5;
-            holePos = new Point();
-            holePos.X = 40;
-            holePos.Y = 40;
             holeRadius = 7;
             holeRadiusPadding = 5;
             mousePressed = false;
