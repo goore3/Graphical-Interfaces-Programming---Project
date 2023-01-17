@@ -92,6 +92,51 @@ namespace Graphical_Interfaces_Programming___Project
             vel = ballPos - mousePos2;
         }
 
+        private void intersectWalls()
+        {
+            foreach(Rectangle rect in walls)
+            {
+                /*
+                if(ballPos.Y > rect.Bottom && ballPos.Y < rect.Top - ballRadius && ballPos.X > rect.Left + ballRadius && ballPos.X < rect.Right)
+                {
+                    vel.X *= -1; ballPos.X = rect.Left - ballRadius;
+                }
+                if (ballPos.Y > rect.Bottom && ballPos.Y < rect.Top - ballRadius && ballPos.X < rect.Right && ballPos.X > rect.Left)
+                {
+                    vel.X *= -1; ballPos.X = rect.Right + ballRadius;
+                }
+                if(ballPos.X > rect.Left + ballRadius && ballPos.X < rect.Right && ballPos.Y > rect.Top - ballRadius && ballPos.Y < rect.Bottom)
+                {
+                    vel.Y *= -1; ballPos.Y = rect.Top - ballRadius;
+                }
+                if (ballPos.X > rect.Left + ballRadius && ballPos.X < rect.Right && ballPos.Y < rect.Bottom && ballPos.Y > rect.Top)
+                {
+                    vel.Y *= -1; ballPos.Y = rect.Bottom + ballRadius;
+                }
+                */
+                if(ballPos.X >= rect.Left - ballRadius && ballPos.X <= rect.Right && ballPos.Y >= rect.Top - ballRadius && ballPos.Y <= rect.Bottom)
+                {
+                    List<float> differences = new List<float>();
+                    differences.Add(Math.Abs(ballPos.Y - rect.Top));
+                    differences.Add(Math.Abs(ballPos.Y - rect.Bottom));
+                    differences.Add(Math.Abs(ballPos.X - rect.Right));
+                    differences.Add(Math.Abs(ballPos.X - rect.Left));
+                    int diffIndex = differences.IndexOf(differences.Min());
+                    switch(diffIndex)
+                    {
+                        case 0:
+                            vel.Y *= -1; ballPos.Y = rect.Top - ballRadius - 1; break;
+                        case 1:
+                            vel.Y *= -1; ballPos.Y = rect.Bottom + 1; break;
+                        case 2:
+                            vel.X *= -1; ballPos.X = rect.Right + ballRadius + 1; break;
+                        case 3:
+                            vel.X *= -1; ballPos.X = rect.Left - ballRadius - 1; break;
+                    }
+                }
+            }
+        }
+
         private void intersectBoundries()
         {
 
@@ -119,6 +164,18 @@ namespace Graphical_Interfaces_Programming___Project
             }
         }
 
+        private void createRectangle(int x, int y, int width, int height)
+        {
+            Rectangle r1 = new Rectangle(x,y,width,height);
+            walls.Add(r1);
+        }
+
+        private void drawRectangles(Graphics g)
+        {
+            g.DrawRectangles(wallPen, walls.ToArray());
+            g.FillRectangles(wallBrush, walls.ToArray());
+        }
+
         private void ballMove()
         {
             ballPos += vel;
@@ -130,6 +187,7 @@ namespace Graphical_Interfaces_Programming___Project
             ballMove();
             intersectBoundries();
             drawObstacles(g);
+            intersectWalls();
             DrawBall(g, golfPen, golfBrush, ballPos, ballRadius);
             DrawBall(g, holePen, holeBrush, holePos, holeRadius);
             if (mouseOnScreen & mousePressed) {
