@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Web;
 using System.Windows.Forms;
+using static Graphical_Interfaces_Programming___Project.Arc;
 using static System.Windows.Forms.LinkLabel;
 
 namespace Graphical_Interfaces_Programming___Project
@@ -16,13 +17,15 @@ namespace Graphical_Interfaces_Programming___Project
     public partial class GolfForm : Form
     {
         Pen golfPen, holePen, wallPen, arcPen;
-        List<Rectangle> walls, arcs;
+        List<Rectangle> walls;
+        List<Arc> arcs;
         SolidBrush holeBrush, golfBrush, wallBrush, arcBrush;
         int ballRadius, holeRadius, holeRadiusPadding, sideNumber, totalShots;
-        bool isLevelEnded, mousePressed, mouseOnScreen;
+        bool isLevelEnded, mousePressed, mouseOnScreen, isIntersecting;
         Vector2 ballPos, vel, holePos, mousePos2;
         Random rand;
         Vector2[] sides;
+        int[] angles;
 
         public GolfForm()
         {
@@ -37,12 +40,14 @@ namespace Graphical_Interfaces_Programming___Project
             drawingPanel.BackColor = Color.FromArgb(192, 255, 192);
             totalShots = 0;
             sides = new Vector2[2];
+            angles = new int[4];
+            angles[0] = 0; angles[1] = 90; angles[2] = 180; angles[3] = 270;
 
             // Pen and Brushes initialization
             golfPen = new Pen(Color.Black, 2);
             holePen = new Pen(Color.White, 2);
             wallPen = new Pen(Color.Brown, 2);
-            arcPen = new Pen(Color.Purple, 2);
+            arcPen = new Pen(Color.Purple, 3);
             holeBrush = new SolidBrush(Color.Brown);
             golfBrush = new SolidBrush(Color.White);
             wallBrush = new SolidBrush(Color.BurlyWood);
@@ -68,18 +73,74 @@ namespace Graphical_Interfaces_Programming___Project
 
             // Obstacles generating
             walls = new List<Rectangle>();
-            arcs = new List<Rectangle>();
+            arcs = new List<Arc>();
             for (int i = 0; i < 3; i++)
             {
-                if (rand.Next(0, 2) == 1)
+                isIntersecting = true;
+                while (isIntersecting)
                 {
-                    createRectangle(rand.Next(drawingPanel.Width - 50), rand.Next(drawingPanel.Height - 50), 10, 100);
+                    isIntersecting = false;
+                    int width = 10;
+                    int height = 100;
+                    if (rand.Next(0, 2) == 1)
+                    {
+                        width = 100;
+                        height = 10;
+                    }
+                    Rectangle r1 = new Rectangle(rand.Next(drawingPanel.Width - 20), rand.Next(drawingPanel.Height - 120), width, height);
+                    foreach (Rectangle rectangle in walls)
+                    {
+                        if (!Rectangle.Intersect(r1, rectangle).IsEmpty)
+                        {
+                            isIntersecting = true;
+                            break;
+                        }
+
+                    }
+                    foreach (Arc arc in arcs)
+                    {
+                        if (!Rectangle.Intersect(r1, arc.Rect).IsEmpty)
+                        {
+                            isIntersecting = true;
+                            break;
+                        }
+                    }
+                    if (!isIntersecting)
+                    {
+                        createRectangle(r1);
+                    }
                 }
-                else
+                isIntersecting = true;
+                while (isIntersecting)
                 {
-                    createRectangle(rand.Next(drawingPanel.Width - 50), rand.Next(drawingPanel.Height - 50), 100, 10);
+                    isIntersecting = false;
+                    int[] angles = { 0, 90, 180, 270 };
+                    float startAngle = angles[rand.Next(0, angles.Length)];
+                    Rectangle a1 = new Rectangle(rand.Next(drawingPanel.Width - 50), rand.Next(drawingPanel.Height - 50), 100, 100); foreach (Rectangle rectangle in walls)
+                    {
+                        foreach (Rectangle rectangle1 in walls)
+                        {
+                            if (!Rectangle.Intersect(a1, rectangle1).IsEmpty)
+                            {
+                                isIntersecting = true;
+                                break;
+                            }
+
+                        }
+                        foreach (Arc arc in arcs)
+                        {
+                            if (!Rectangle.Intersect(a1, arc.Rect).IsEmpty)
+                            {
+                                isIntersecting = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!isIntersecting)
+                    {
+                        createArc(new Arc(a1, startAngle, 180));
+                    }
                 }
-                createArc(rand.Next(drawingPanel.Width - 50),rand.Next(drawingPanel.Height - 50), 100, 100);
             }
         }
 
@@ -398,22 +459,19 @@ namespace Graphical_Interfaces_Programming___Project
         private void drawObstacles(Graphics g)
         {
             g.DrawRectangles(wallPen, walls.ToArray());
-            foreach (Rectangle arc in arcs)
+            foreach (Arc arc in arcs)
             {
-
-                g.DrawArc(arcPen, arc, 0, 180);
+                g.DrawArc(arcPen, arc.Rect, arc.StartAngle, arc.SweepAngle);
             }
             g.FillRectangles(wallBrush, walls.ToArray());
         }
 
-        private void createRectangle(int x, int y, int width, int height)
+        private void createRectangle(Rectangle r1)
         {
-            Rectangle r1 = new Rectangle(x, y, width, height);
             walls.Add(r1);
         }
-        private void createArc(int x, int y, int width, int height)
+        private void createArc(Arc a1)
         {
-            Rectangle a1 = new Rectangle(x, y, width, height);
             arcs.Add(a1);
         }
     }
