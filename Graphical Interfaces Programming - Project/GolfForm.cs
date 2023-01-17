@@ -116,7 +116,7 @@ namespace Graphical_Interfaces_Programming___Project
                     isIntersecting = false;
                     int[] angles = { 0, 90, 180, 270 };
                     float startAngle = angles[rand.Next(0, angles.Length)];
-                    Rectangle a1 = new Rectangle(rand.Next(drawingPanel.Width - 50), rand.Next(drawingPanel.Height - 50), 100, 100); foreach (Rectangle rectangle in walls)
+                    Rectangle a1 = new Rectangle(rand.Next(drawingPanel.Width - 100), rand.Next(drawingPanel.Height - 100), 100, 100); foreach (Rectangle rectangle in walls)
                     {
                         foreach (Rectangle rectangle1 in walls)
                         {
