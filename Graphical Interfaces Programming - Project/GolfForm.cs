@@ -260,11 +260,7 @@ namespace Graphical_Interfaces_Programming___Project
         private void ballMove()
         {
             var newBallPos = ballPos + vel;
-            if (checkArcCollision(newBallPos, ballPos))
-            {
-                var chuj = 3;
-            }
-            if (!checkRectangleCollision(newBallPos, ballPos))
+            if (!checkArcCollision(newBallPos, ballPos) && !checkRectangleCollision(newBallPos, ballPos))
             {
                 ballPos += vel;
                 vel /= 1.5f;
@@ -291,11 +287,23 @@ namespace Graphical_Interfaces_Programming___Project
                 var returnValue = LineIntersectsArc(ballPos, newballPos, arc);
                 if (returnValue == 1)
                 {
-
                     return true;
-                } else if(returnValue == 0)
+                } 
+                else if(returnValue == 0)
                 {
-                    return true;
+                    switch (arc.SlideSide)
+                    {
+                        case 0:
+                            vel.Y *= -1; break;
+                        case 1:
+                            vel.X *= -1; break;
+                        case 2:
+                            vel.Y *= -1; break;
+                        case 3:
+                            vel.X *= -1; break;
+                        default:
+                            break;
+                    }
                 }
             }
             return false;
@@ -327,7 +335,6 @@ namespace Graphical_Interfaces_Programming___Project
             ballMove();
             intersectBoundries();
             drawObstacles(g);
-            //intersectWalls();
             DrawBall(g, golfPen, golfBrush, ballPos, ballRadius);
             DrawBall(g, holePen, holeBrush, holePos, holeRadius);
             if (mouseOnScreen & mousePressed) {
