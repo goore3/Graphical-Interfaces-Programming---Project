@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Web;
 using System.Windows.Forms;
+using Wmedia = System.Windows.Media ;
 using static Graphical_Interfaces_Programming___Project.Arc;
 using static System.Windows.Forms.LinkLabel;
 
@@ -26,6 +27,10 @@ namespace Graphical_Interfaces_Programming___Project
         Random rand;
         Vector2[] sides;
         int[] angles;
+        float angleTurn;
+        float angleStep;
+        Arc rotateArc;
+        Vector2 ballBeforeRotate;
 
         public GolfForm()
         {
@@ -35,6 +40,8 @@ namespace Graphical_Interfaces_Programming___Project
 
         public void initValues()
         {
+            angleTurn = -1;
+
             // Function called for every game reset and at start of the game
             rand = new Random(new Random().Next());
             drawingPanel.BackColor = Color.FromArgb(192, 255, 192);
@@ -259,8 +266,39 @@ namespace Graphical_Interfaces_Programming___Project
 
         private void ballMove()
         {
+            if (angleTurn >= 3.5)
+            {
+                angleTurn = -1;
+                float len = vel.Length();
+                switch(rotateArc.SlideSide)
+                {
+                    case 0:
+                        vel = new Vector2(0, -len);
+                        break;
+                    case 1:
+                        ballPos.X += 5;
+                        vel = new Vector2(len, 0);
+                        break;
+                    case 2:
+                        vel = new Vector2(0, len);
+                        break;
+                    case 3:
+                        ballPos.X -= 5;
+                        vel = new Vector2(-len, 0);
+                        break;
+                }
+            } else if (angleTurn >= 0)
+            {
+                drawByAngle();
+                angleTurn += angleStep;
+                return;
+            }
             var newBallPos = ballPos + vel;
-            if (!checkArcCollision(newBallPos, ballPos) && !checkRectangleCollision(newBallPos, ballPos))
+            if (checkArcCollision(newBallPos, ballPos))
+            {
+                return;
+            }
+            if (!checkRectangleCollision(newBallPos, ballPos))
             {
                 ballPos += vel;
                 vel /= 1.5f;
@@ -287,6 +325,24 @@ namespace Graphical_Interfaces_Programming___Project
                 var returnValue = LineIntersectsArc(ballPos, newballPos, arc);
                 if (returnValue == 1)
                 {
+                    switch(arc.SlideSide)
+                    {
+                        case 0:
+                            ballBeforeRotate = arc.P2;
+                            break;
+                        case 1:
+                            ballBeforeRotate = arc.P2;
+                            break;
+                        case 2:
+                            ballBeforeRotate = arc.P1;
+                            break;
+                        case 3:
+                            ballBeforeRotate = arc.P1;
+                            break;
+                    }
+                    rotateArc = arc;
+                    angleTurn = 0;
+                    angleStep = 0.5f;
                     return true;
                 } 
                 else if(returnValue == 0)
@@ -307,6 +363,27 @@ namespace Graphical_Interfaces_Programming___Project
                 }
             }
             return false;
+        }
+
+        public Vector2 rotate_point(float cx, float cy, float angle, Vector2 p)
+        {
+            float s = (float) Math.Sin(angle);
+            float c = (float) Math.Cos(angle);
+            // translate point back to origin:
+            p.X -= cx;
+            p.Y -= cy;
+            // rotate point
+            float Xnew = p.X * c - p.Y * s;
+            float Ynew = p.X * s + p.Y * c;
+            // translate point back:
+            p.X = Xnew + cx;
+            p.Y = Ynew + cy;
+            return p;
+        }
+
+        private void drawByAngle()
+        {
+            ballPos = rotate_point(rotateArc.Middle.X, rotateArc.Middle.Y, angleTurn, ballBeforeRotate);
         }
 
         private void intersectRectangle(Rectangle rect)
