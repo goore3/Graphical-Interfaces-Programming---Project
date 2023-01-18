@@ -30,6 +30,7 @@ namespace Graphical_Interfaces_Programming___Project
         float angleTurn;
         float angleStep;
         Arc rotateArc;
+        Vector2 ballBeforeRotate;
 
         public GolfForm()
         {
@@ -265,20 +266,37 @@ namespace Graphical_Interfaces_Programming___Project
 
         private void ballMove()
         {
-            var newBallPos = ballPos + vel;
-            if (angleTurn > 180)
+            if (angleTurn >= 3.5)
             {
                 angleTurn = -1;
+                float len = vel.Length();
+                switch(rotateArc.SlideSide)
+                {
+                    case 0:
+                        vel = new Vector2(0, -len);
+                        break;
+                    case 1:
+                        ballPos.X += 5;
+                        vel = new Vector2(len, 0);
+                        break;
+                    case 2:
+                        vel = new Vector2(0, len);
+                        break;
+                    case 3:
+                        ballPos.X -= 5;
+                        vel = new Vector2(-len, 0);
+                        break;
+                }
             } else if (angleTurn >= 0)
             {
                 drawByAngle();
                 angleTurn += angleStep;
                 return;
             }
-            
+            var newBallPos = ballPos + vel;
             if (checkArcCollision(newBallPos, ballPos))
             {
-                var chuj = 3;
+                return;
             }
             if (!checkRectangleCollision(newBallPos, ballPos))
             {
@@ -307,10 +325,24 @@ namespace Graphical_Interfaces_Programming___Project
                 var returnValue = LineIntersectsArc(ballPos, newballPos, arc);
                 if (returnValue != -1)
                 {
-                    //ballPos = arc.P1;
+                    switch(arc.SlideSide)
+                    {
+                        case 0:
+                            ballBeforeRotate = arc.P2;
+                            break;
+                        case 1:
+                            ballBeforeRotate = arc.P2;
+                            break;
+                        case 2:
+                            ballBeforeRotate = arc.P1;
+                            break;
+                        case 3:
+                            ballBeforeRotate = arc.P1;
+                            break;
+                    }
                     rotateArc = arc;
                     angleTurn = 0;
-                    angleStep = 20;
+                    angleStep = 0.5f;
                     return true;
                 } 
                 //else if(returnValue == 0)
@@ -340,7 +372,7 @@ namespace Graphical_Interfaces_Programming___Project
 
         private void drawByAngle()
         {
-            ballPos = rotate_point(rotateArc.Middle.X, rotateArc.Middle.Y, angleTurn, ballPos);
+            ballPos = rotate_point(rotateArc.Middle.X, rotateArc.Middle.Y, angleTurn, ballBeforeRotate);
         }
 
         private void intersectRectangle(Rectangle rect)

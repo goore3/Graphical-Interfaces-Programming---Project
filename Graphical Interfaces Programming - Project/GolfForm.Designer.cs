@@ -78,7 +78,7 @@
             // fToolStripMenuItem
             // 
             this.fToolStripMenuItem.Name = "fToolStripMenuItem";
-            this.fToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fToolStripMenuItem.Size = new System.Drawing.Size(38, 20);
             this.fToolStripMenuItem.Text = "Exit";
             this.fToolStripMenuItem.Click += new System.EventHandler(this.fToolStripMenuItem_Click);
             // 
