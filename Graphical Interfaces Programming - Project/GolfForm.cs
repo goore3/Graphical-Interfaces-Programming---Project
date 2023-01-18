@@ -19,7 +19,7 @@ namespace Graphical_Interfaces_Programming___Project
         Pen golfPen, holePen, wallPen, arcPen;
         List<Rectangle> walls;
         List<Arc> arcs;
-        SolidBrush holeBrush, golfBrush, wallBrush, arcBrush;
+        SolidBrush holeBrush, golfBrush, wallBrush;
         int ballRadius, holeRadius, holeRadiusPadding, sideNumber, totalShots;
         bool isLevelEnded, mousePressed, mouseOnScreen, isIntersecting;
         Vector2 ballPos, vel, holePos, mousePos2;
@@ -51,7 +51,6 @@ namespace Graphical_Interfaces_Programming___Project
             holeBrush = new SolidBrush(Color.Brown);
             golfBrush = new SolidBrush(Color.White);
             wallBrush = new SolidBrush(Color.BurlyWood);
-            arcBrush = new SolidBrush(Color.MediumPurple);
 
             // Sides initialization
             sideNumber = rand.Next(0, 2);
@@ -74,7 +73,7 @@ namespace Graphical_Interfaces_Programming___Project
             // Obstacles generating
             walls = new List<Rectangle>();
             arcs = new List<Arc>();
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 5; i++)
             {
                 isIntersecting = true;
                 while (isIntersecting)
