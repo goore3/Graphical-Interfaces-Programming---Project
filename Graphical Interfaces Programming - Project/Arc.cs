@@ -12,7 +12,7 @@ namespace Graphical_Interfaces_Programming___Project
     {
         Rectangle rect;
         float startAngle, sweepAngle;
-        Vector2 p1, pM, p2;
+        Vector2 p1, pM, p2, middle;
         int slideSide;
 
         public Arc(Rectangle rect, float startAngle, float sweepAngle)
@@ -20,7 +20,7 @@ namespace Graphical_Interfaces_Programming___Project
             this.rect = rect;
             this.startAngle = startAngle;
             this.sweepAngle = sweepAngle;
-
+            middle = new Vector2(rect.X + rect.Width / 2, rect.Y + rect.Height / 2);
             switch(startAngle)
             {
                 case 0:
@@ -57,5 +57,6 @@ namespace Graphical_Interfaces_Programming___Project
         public Vector2 PM { get => pM; set => pM = value; }
         public Vector2 P2 { get => p2; set => p2 = value; }
         public int SlideSide { get => slideSide; set => slideSide = value; }
+        public Vector2 Middle { get => middle; set => middle = value; }
     }
 }

@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Web;
 using System.Windows.Forms;
+using Wmedia = System.Windows.Media ;
 using static Graphical_Interfaces_Programming___Project.Arc;
 using static System.Windows.Forms.LinkLabel;
 
@@ -26,6 +27,9 @@ namespace Graphical_Interfaces_Programming___Project
         Random rand;
         Vector2[] sides;
         int[] angles;
+        float angleTurn;
+        float angleStep;
+        Arc rotateArc;
 
         public GolfForm()
         {
@@ -35,6 +39,8 @@ namespace Graphical_Interfaces_Programming___Project
 
         public void initValues()
         {
+            angleTurn = -1;
+
             // Function called for every game reset and at start of the game
             rand = new Random(new Random().Next());
             drawingPanel.BackColor = Color.FromArgb(192, 255, 192);
@@ -260,6 +266,16 @@ namespace Graphical_Interfaces_Programming___Project
         private void ballMove()
         {
             var newBallPos = ballPos + vel;
+            if (angleTurn > 180)
+            {
+                angleTurn = -1;
+            } else if (angleTurn >= 0)
+            {
+                drawByAngle();
+                angleTurn += angleStep;
+                return;
+            }
+            
             if (checkArcCollision(newBallPos, ballPos))
             {
                 var chuj = 3;
@@ -289,16 +305,42 @@ namespace Graphical_Interfaces_Programming___Project
             foreach(Arc arc in arcs)
             {
                 var returnValue = LineIntersectsArc(ballPos, newballPos, arc);
-                if (returnValue == 1)
+                if (returnValue != -1)
                 {
+                    //ballPos = arc.P1;
+                    rotateArc = arc;
+                    angleTurn = 0;
+                    angleStep = 20;
+                    return true;
+                } 
+                //else if(returnValue == 0)
+                //{
+                //    return true;
+                //}
 
-                    return true;
-                } else if(returnValue == 0)
-                {
-                    return true;
-                }
             }
             return false;
+        }
+
+        public Vector2 rotate_point(float cx, float cy, float angle, Vector2 p)
+        {
+            float s = (float) Math.Sin(angle);
+            float c = (float) Math.Cos(angle);
+            // translate point back to origin:
+            p.X -= cx;
+            p.Y -= cy;
+            // rotate point
+            float Xnew = p.X * c - p.Y * s;
+            float Ynew = p.X * s + p.Y * c;
+            // translate point back:
+            p.X = Xnew + cx;
+            p.Y = Ynew + cy;
+            return p;
+        }
+
+        private void drawByAngle()
+        {
+            ballPos = rotate_point(rotateArc.Middle.X, rotateArc.Middle.Y, angleTurn, ballPos);
         }
 
         private void intersectRectangle(Rectangle rect)
