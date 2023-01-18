@@ -25,8 +25,8 @@ namespace Graphical_Interfaces_Programming___Project
             {
                 case 0:
                     slideSide = 0;
-                    p1 = new Vector2(rect.X,rect.Y + rect.Height/2);
-                    pM = new Vector2(rect.X + rect.Width/2,rect.Y + rect.Height);
+                    p1 = new Vector2(rect.X, rect.Y + rect.Height/2);
+                    pM = new Vector2(rect.X + rect.Width/2, rect.Y + rect.Height);
                     p2 = new Vector2(rect.X + rect.Width, rect.Y + rect.Height/2);
                     break;
                 case 90:

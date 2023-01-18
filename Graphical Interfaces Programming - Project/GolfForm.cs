@@ -323,7 +323,7 @@ namespace Graphical_Interfaces_Programming___Project
             foreach(Arc arc in arcs)
             {
                 var returnValue = LineIntersectsArc(ballPos, newballPos, arc);
-                if (returnValue != -1)
+                if (returnValue == 1)
                 {
                     switch(arc.SlideSide)
                     {
@@ -345,11 +345,22 @@ namespace Graphical_Interfaces_Programming___Project
                     angleStep = 0.5f;
                     return true;
                 } 
-                //else if(returnValue == 0)
-                //{
-                //    return true;
-                //}
-
+                else if(returnValue == 0)
+                {
+                    switch (arc.SlideSide)
+                    {
+                        case 0:
+                            vel.Y *= -1; break;
+                        case 1:
+                            vel.X *= -1; break;
+                        case 2:
+                            vel.Y *= -1; break;
+                        case 3:
+                            vel.X *= -1; break;
+                        default:
+                            break;
+                    }
+                }
             }
             return false;
         }
@@ -401,7 +412,6 @@ namespace Graphical_Interfaces_Programming___Project
             ballMove();
             intersectBoundries();
             drawObstacles(g);
-            //intersectWalls();
             DrawBall(g, golfPen, golfBrush, ballPos, ballRadius);
             DrawBall(g, holePen, holeBrush, holePos, holeRadius);
             if (mouseOnScreen & mousePressed) {
