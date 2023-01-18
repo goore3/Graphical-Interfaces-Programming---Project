@@ -196,32 +196,38 @@ namespace Graphical_Interfaces_Programming___Project
             }
         }
 
-
-        private void intersectWalls()
+        private int LineIntersectsArc(Vector2 prevPoint, Vector2 newPoint, Arc arc)
         {
-            foreach(Rectangle rect in walls)
+            bool line1 = LineIntersectsLine(prevPoint, newPoint, arc.P1, arc.PM);
+            bool line2 = LineIntersectsLine(prevPoint, newPoint, arc.PM, arc.P2);
+
+            bool final = line1 || line2;
+
+            if(final)
             {
-                if(ballPos.X >= rect.Left - ballRadius && ballPos.X <= rect.Right && ballPos.Y >= rect.Top - ballRadius && ballPos.Y <= rect.Bottom)
+                if(arc.SlideSide == getClosestWall(arc))
                 {
-                    List<float> differences = new List<float>();
-                    differences.Add(Math.Abs(ballPos.Y - rect.Top));
-                    differences.Add(Math.Abs(ballPos.Y - rect.Bottom));
-                    differences.Add(Math.Abs(ballPos.X - rect.Right));
-                    differences.Add(Math.Abs(ballPos.X - rect.Left));
-                    int diffIndex = differences.IndexOf(differences.Min());
-                    switch(diffIndex)
-                    {
-                        case 0:
-                            vel.Y *= -1; ballPos.Y = rect.Top - ballRadius - 1; break;
-                        case 1:
-                            vel.Y *= -1; ballPos.Y = rect.Bottom + 1; break;
-                        case 2:
-                            vel.X *= -1; ballPos.X = rect.Right + ballRadius + 1; break;
-                        case 3:
-                            vel.X *= -1; ballPos.X = rect.Left - ballRadius - 1; break;
-                    }
+                    return 1;
+                } else
+                {
+                    return 0;
                 }
+            } else
+            {
+                return -1;
             }
+        }
+
+        private int getClosestWall(Arc arc)
+        {
+            var rect = arc.Rect;
+            List<float> differences = new List<float>();
+            differences.Add(Math.Abs(ballPos.Y - rect.Top));
+            differences.Add(Math.Abs(ballPos.X - rect.Right));
+            differences.Add(Math.Abs(ballPos.Y - rect.Bottom));
+            differences.Add(Math.Abs(ballPos.X - rect.Left));
+            int diffIndex = differences.IndexOf(differences.Min());
+            return diffIndex;
         }
 
         private void intersectBoundries()
@@ -251,15 +257,13 @@ namespace Graphical_Interfaces_Programming___Project
             }
         }
 
-        private void drawRectangles(Graphics g)
-        {
-            g.DrawRectangles(wallPen, walls.ToArray());
-            g.FillRectangles(wallBrush, walls.ToArray());
-        }
-
         private void ballMove()
         {
             var newBallPos = ballPos + vel;
+            if (checkArcCollision(newBallPos, ballPos))
+            {
+                var chuj = 3;
+            }
             if (!checkRectangleCollision(newBallPos, ballPos))
             {
                 ballPos += vel;
@@ -274,6 +278,23 @@ namespace Graphical_Interfaces_Programming___Project
                 if(LineIntersectsRectangle(ballPos, newballPos, rect))
                 {
                     intersectRectangle(rect);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool checkArcCollision(Vector2 newballPos, Vector2 ballPos)
+        {
+            foreach(Arc arc in arcs)
+            {
+                var returnValue = LineIntersectsArc(ballPos, newballPos, arc);
+                if (returnValue == 1)
+                {
+
+                    return true;
+                } else if(returnValue == 0)
+                {
                     return true;
                 }
             }
